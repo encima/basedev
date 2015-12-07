@@ -16,6 +16,7 @@ ADD https://raw.githubusercontent.com/encima/config/master/vim.conf /root/.vim/v
 ADD https://raw.githubusercontent.com/encima/config/master/tmux.conf /root/.tmux.conf 
 ADD https://bitbucket.org/!api/2.0/snippets/encima/rLMxM/22d706ee9fb7ba2e4dec3fa6553330de125aaa9a/files/.wakatime.cfg /root/.wakatime.cfg
 RUN mkdir ~/development
+RUN cd ~/
 RUN vim +PluginInstall +qall
 
 CMD ["/bin/zsh"]
