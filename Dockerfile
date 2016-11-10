@@ -1,22 +1,27 @@
-FROM ubuntu:latest
-MAINTAINER Chris Gwilliams <chris@gwillia.ms>
+FROM alpine:edge
+RUN sed -i s/cdn/6/ /etc/apk/repositories \
+    && apk add --update --progress \
+        musl \
+        build-base \
+        python3 \
+        python3-dev \
+        git \
+        zsh \
+		bash \
+        vim \
+        tmux \
+		nodejs \
+		mysql \
+		curl \
+    && pip3 install --no-cache-dir --upgrade pip
 
-ENV HOME /root
+RUN cd /usr/bin \
+  && ln -sf easy_install-3.5 easy_install \
+  && ln -sf python3 python \
+  && ln -sf pip3 pip 
 
-# Update packages and get base requirements
-RUN apt-get update && \
-    apt-get install -y sudo zsh curl wget nano vim git tmux python python-pip gcc nginx nodejs && \
-	    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-# Get them sweet oh my zshs and vundle
-RUN git clone git://github.com/bwithem/oh-my-zsh.git ~/.oh-my-zsh \
-    && cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc \
-	    && chsh -s /bin/zsh
-RUN git clone https://github.com/hawkbee/vundle.git ~/.vim && cd ~/.vim && ./setup.sh
-ADD https://raw.githubusercontent.com/encima/config/master/vim.conf /root/.vim/vimrc 
-ADD https://raw.githubusercontent.com/encima/config/master/tmux.conf /root/.tmux.conf 
-ADD https://bitbucket.org/!api/2.0/snippets/encima/rLMxM/22d706ee9fb7ba2e4dec3fa6553330de125aaa9a/files/.wakatime.cfg /root/.wakatime.cfg
-RUN mkdir ~/development
-RUN cd ~/
-RUN vim +PluginInstall +qall
-
-CMD ["/bin/zsh"]
+RUN cd /home/
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+RUN git clone https://github.com/encima/config
+RUN cd config \
+	&& ./handle_aliases
